@@ -18,6 +18,9 @@ Swift5(SwiftUI)
 - 編集機能
   - 一覧項目をスワイプで編集ボタンを表示
   - 編集モードに切り替え
+- 一覧
+  - 曜日を表示
+  - 作業時間を表示
 
 ## 画面
 ![Simulator Screenshot - iPhone 14 Pro - 2023-07-08 at 22 34 01](https://github.com/simgon/done-list/assets/23553796/1c36d381-a9ca-48c6-b3ea-4d93569ba6dc)
