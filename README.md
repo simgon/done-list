@@ -27,4 +27,4 @@ Swift5(SwiftUI)
   - [ ] リスト内容をタップ長押しでコピー
 
 ## 画面
-![スクショ](https://github.com/simgon/done-list/assets/23553796/8b4b570f-d4b9-465f-8684-c3572e7bed20)
+![Simulator Screenshot - iPhone 14 Pro - 2023-07-17 at 16 01 56](https://github.com/simgon/done-list/assets/23553796/d0c664fb-3814-4908-90cc-f60b30872ffa)
