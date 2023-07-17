@@ -23,4 +23,4 @@ Swift5(SwiftUI)
   - 作業時間を表示
 
 ## 画面
-![Simulator Screenshot - iPhone 14 Pro - 2023-07-08 at 22 34 01](https://github.com/simgon/done-list/assets/23553796/1c36d381-a9ca-48c6-b3ea-4d93569ba6dc)
+![スクショ](https://github.com/simgon/done-list/assets/23553796/8b4b570f-d4b9-465f-8684-c3572e7bed20)
