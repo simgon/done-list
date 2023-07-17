@@ -79,12 +79,24 @@ struct ContentView: View {
                         Section {
                             ForEach (0 ..< doneListByDate[dateList[dateIdx]]!.count, id: \.self) { listIdx in
                                 let doneList = doneListByDate[dateList[dateIdx]]![listIdx]
+                                let startDate: Date? = convertStringToDate(dateValue: doneList.StartDate)
+                                let endDate: Date? = convertStringToDate(dateValue: doneList.EndDate)
+                                let startHHmm = toDateString(dateValue:startDate, dateFormat: "HH:mm")
+                                let endHHmm = toDateString(dateValue:endDate, dateFormat: "HH:mm")
+                                let timeFromTo = "\(startHHmm)~\(endHHmm)"
+                                let timeDiff = calculateTimeDifference(startDate: startDate, endDate: endDate)
+                                
                                 // リスト表示
                                 HStack {
-                                    let startHHmm = toDateString(dateValue:doneList.StartDate, dateFormat: "HH:mm")
-                                    let endHHmm = toDateString(dateValue:doneList.EndDate, dateFormat: "HH:mm")
-                                    Text("\(startHHmm)~\(endHHmm)")
-                                    Text(doneList.Contents)
+                                    VStack(alignment: .leading) {
+                                        // 時間
+                                        HStack(alignment: .bottom) {
+                                            Text("\(timeFromTo)").font(.headline)
+                                            Text("\(timeDiff)").font(.caption)
+                                        }.padding(.bottom, 1)
+                                        // 内容
+                                        Text(doneList.Contents).font(.body)
+                                    }
                                 }
                                 // スワイプアクション
                                 .swipeActions(edge: .trailing) {
@@ -97,7 +109,10 @@ struct ContentView: View {
                                 }
                             }
                         } header: {
-                            Text("\(dateList[dateIdx])")
+                            let week = getWeekdayFromDate(date: convertStringToDate(dateValue: dateList[dateIdx], dateFormat: "yyyy/MM/dd"))
+                            
+                            // 日付
+                            Text("\(dateList[dateIdx])(\(week))")
                         }
                     }
                 }
@@ -152,7 +167,7 @@ struct ContentView: View {
         
         if DBService.shared.insertDoneList(doneList: doneList) {
             doneLists.append(doneList)
-            doneLists.sort { $0.StartDate > $1.StartDate }
+            doneLists.sort { $0.StartDate != $1.StartDate ? $0.StartDate > $1.StartDate : $0.DoneListID > $1.DoneListID }
             
             self.contents = ""
         } else {

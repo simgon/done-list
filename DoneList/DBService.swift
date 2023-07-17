@@ -80,7 +80,7 @@ final class DBService {
         let sql = """
             SELECT   done_list_id, contents, start_date, end_date
             FROM     done_list
-            ORDER BY start_date DESC
+            ORDER BY start_date DESC, done_list_id DESC
             """
         
         var stmt: OpaquePointer? = nil
