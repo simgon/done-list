@@ -108,15 +108,21 @@ final class DBService {
                             VALUES
                             (?, ?, ?, ?)
                         ;
-                        """;
+                        """
         var insertStmt: OpaquePointer? = nil
         
-        if sqlite3_prepare_v2(db, (insertSql as NSString).utf8String, -1, &insertStmt, nil) != SQLITE_OK {
+        if sqlite3_exec(db, "BEGIN", nil, nil, nil) != SQLITE_OK {
             print("db error: \(getDBErrorMessage(db))")
             return false
         }
         
-        sqlite3_bind_text(insertStmt, 1,(doneList.DoneListID as NSString).utf8String, -1, nil)
+        if sqlite3_prepare_v2(db, (insertSql as NSString).utf8String, -1, &insertStmt, nil) != SQLITE_OK {
+            print("db error: \(getDBErrorMessage(db))")
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
+            return false
+        }
+        
+        sqlite3_bind_text(insertStmt, 1, (doneList.DoneListID as NSString).utf8String, -1, nil)
         sqlite3_bind_text(insertStmt, 2, (doneList.Contents as NSString).utf8String, -1, nil)
         sqlite3_bind_text(insertStmt, 3, (doneList.StartDate as NSString).utf8String, -1, nil)
         sqlite3_bind_text(insertStmt, 4, (doneList.EndDate as NSString).utf8String, -1, nil)
@@ -124,9 +130,18 @@ final class DBService {
         if sqlite3_step(insertStmt) != SQLITE_DONE {
             print("db error: \(getDBErrorMessage(db))")
             sqlite3_finalize(insertStmt)
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
             return false
         }
+        
         sqlite3_finalize(insertStmt)
+        
+        if sqlite3_exec(db, "COMMIT", nil, nil, nil) != SQLITE_OK {
+            print("db error: \(getDBErrorMessage(db))")
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
+            return false
+        }
+        
         return true
     }
     
@@ -140,8 +155,14 @@ final class DBService {
                         """
         var deleteStmt: OpaquePointer? = nil
         
+        if sqlite3_exec(db, "BEGIN", nil, nil, nil) != SQLITE_OK {
+            print("db error: \(getDBErrorMessage(db))")
+            return false
+        }
+        
         if sqlite3_prepare_v2(db, (deleteSql as NSString).utf8String, -1, &deleteStmt, nil) != SQLITE_OK {
             print("db error: \(getDBErrorMessage(db))")
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
             return false
         }
         
@@ -150,12 +171,21 @@ final class DBService {
         if sqlite3_step(deleteStmt) != SQLITE_DONE {
             print("db error: \(getDBErrorMessage(db))")
             sqlite3_finalize(deleteStmt)
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
             return false
         }
 
         sqlite3_finalize(deleteStmt)
+        
+        if sqlite3_exec(db, "COMMIT", nil, nil, nil) != SQLITE_OK {
+            print("db error: \(getDBErrorMessage(db))")
+            sqlite3_exec(db, "ROLLBACK", nil, nil, nil)
+            return false
+        }
+        
         return true
     }
+
 }
 
 struct DoneList {
